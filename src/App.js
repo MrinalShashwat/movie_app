@@ -1,3 +1,4 @@
+ 
 import React, { useEffect, useState } from 'react';
 import { 
     Layout, 
@@ -27,7 +28,7 @@ const TextTitle = Typography.Title;
 const SearchBox = ({searchHandler}) => {
     return (
         <Row>
-            <Col span={12} offset={6}>
+            <Col  span={12} offset={6}>
                 <Search
                     placeholder="enter movie, series, episode name"
                     enterButton="Search"
@@ -60,8 +61,8 @@ const ColCardBox = ({Title, imdbID, Poster, Type, ShowDetail, DetailRequest, Act
     }
 
     return (
-        <Col style={{margin: '20px 0'}} className="gutter-row" span={4}>
-            <div className="gutter-box">
+        <Col xs={24} xl={8} style={{margin: '20px 0'}} className="gutter-row" span={4}>
+            <div className="gutter-box" xs={24} xl={8}>
                 <Card
                     style={{ width: 200 }}
                     cover={
@@ -96,7 +97,7 @@ const MovieDetail = ({Title, Poster, imdbRating, Rated, Runtime, Genre, Plot}) =
                     alt={Title} 
                 />
             </Col>
-            <Col span={13}>
+            <Col xs={24} xl={8} span={13}>
                 <Row>
                     <Col span={21}>
                         <TextTitle level={4}>{Title}</TextTitle></Col>
