@@ -15,6 +15,7 @@ import {
 import 'antd/dist/antd.css';
 
 
+
 const API_KEY = '2d6e3ae3';
 const { Header, Content, Footer } = Layout;
 const { Search } = Input;
@@ -126,6 +127,7 @@ const Loader = () => (
     </div>
 )
 
+var dt=[]
 function App() {
 
     const [data, setData] = useState(null);
@@ -163,23 +165,65 @@ function App() {
         }
 
         else{
-            fetch(`http://www.omdbapi.com/?s=${q}&apikey=${API_KEY}`)
-            .then(resp => resp)
+            // let promises=[];
+            // for(let i=1;i<=5;i++)
+            //     promises.push(fetch(`http://www.omdbapi.com/?s=${q}&apikey=${API_KEY}&page=${i}`));
+            // Promise.all(promises)
+            var sz = 1
+            fetch(`http://www.omdbapi.com/?s=${q}&apikey=${API_KEY}&page=${sz}`)
+            .then(resp => {
+                // sz = Number(resp['totalResults']);
+                // // console.log(sz+"Fadfss");
+                // console.log(resp['Response']+"Sds");
+                // sz = sz/10;
+
+                return resp.json();
+            }
+            )
+            .then(data => {
+                console.log(data);
+                sz=data.totalResults;
+                sz=sz/10;
+                let dt=[]
+            for(let i=1;i<=sz;i++)
+            {  
+            
+                fetch(`http://www.omdbapi.com/?s=${q}&apikey=${API_KEY}&page=${i}`)
+
+           // .then(resp => resp)
             .then(resp => resp.json())
             .then(response => {
                 if (response.Response === 'False') {
                     setError(response.Error);
                 }
                 else {
-                    setData(response.Search);
-                }
+                    dt.push(response.Search);
 
+                    //setData(dt);                   
+                }
+                var x=[];
+                for(let j=0;j<dt.length;j++){
+                    for(let k=0;k<dt[j].length;k++){
+                        x.push(dt[j][k]);
+                    }
+                }
+                console.log(x);
+                setData(x);
                 setLoading(false);
+                
             })
             .catch(({message}) => {
                 setError(message);
                 setLoading(false);
             })
+        }
+    
+            })
+
+           
+      
+        
+          
         }
             
     }, [q]);
@@ -208,17 +252,29 @@ function App() {
                                     <Alert message={error} type="error" />
                                 </div>
                             }
-                            
+                            {console.log(data)}
                             { data !== null && data.length > 0 && data.map((result, index) => (
-                                <ColCardBox 
+
+                               
+                            //    <InfiniteScroll
+                            //         dataLength={dt.length} //This is important field to render the next data
+                            //         next={dt}
+                            //         hasMore={true} 
+                                    
+                            //    >
+                                   
+                               <ColCardBox 
                                     ShowDetail={setShowDetail} 
                                     DetailRequest={setDetailRequest}
                                     ActivateModal={setActivateModal}
                                     key={index} 
                                     {...result} 
-                                />    
+                                />  
+                                   
+                                //  </InfiniteScroll>  
                             ))}
                         </Row>
+                        
                     </div>
                     <Modal
                         title='About'
