@@ -185,7 +185,7 @@ function App() {
                 sz=data.totalResults;
                 sz=sz/10;
                 let dt=[]
-            for(let i=1;i<=sz;i++)
+            for(let i=1;i<=sz+1;i++)
             {  
             
                 fetch(`http://www.omdbapi.com/?s=${q}&apikey=${API_KEY}&page=${i}`)
