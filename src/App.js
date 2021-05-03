@@ -1,5 +1,4 @@
- 
-import React, { useEffect, useState } from 'react';
+ import React, { useEffect, useState } from 'react';
 import { 
     Layout, 
     Input, 
@@ -13,6 +12,7 @@ import {
     Typography 
 } from 'antd';
 import 'antd/dist/antd.css';
+import { Pagination } from 'antd';
 
 
 
@@ -35,7 +35,11 @@ const SearchBox = ({searchHandler}) => {
                     enterButton="Search"
                     size="large"
                     allowClear = "True"
-                    onSearch={value => searchHandler(value)}
+                    onSearch={
+                        value =>{ searchHandler(value);
+                        }
+                    }
+                   
                 />
             </Col>
         </Row>
@@ -62,14 +66,21 @@ const ColCardBox = ({Title, imdbID, Poster, Type, ShowDetail, DetailRequest, Act
     }
 
     return (
-        <Col xs={24} xl={8} style={{margin: '20px 0'}} className="gutter-row" span={4}>
-            <div className="gutter-box" xs={24} xl={8}>
+        <Col 
+            xs= {480}
+            sm ={576}
+            md ={768}
+            lg ={992}
+            xl ={1200}
+            xxl = {1600}
+           >
+            <div className="gutter-box" style ={{padding : 24}}>
                 <Card
                     style={{ width: 200 }}
                     cover={
                         <img style = {{width: 200, height: 300}}
                             alt={Title}
-                            src={Poster === 'N/A' ? 'https://placehold.it/198x264&text=Image+Not+Found' : Poster}
+                            src={Poster === 'N/A' ? 'https://bookshop.org/assets/no_image-22fd02851ce2e0858682f793b15fc04552e7ac5af5ef0702dcfb9fbd290e406f.svg' : Poster}
                         />
                     }
                     onClick={() => clickHandler()}
@@ -94,7 +105,7 @@ const MovieDetail = ({Title, Poster, imdbRating, Rated, Runtime, Genre, Plot}) =
         <Row>
             <Col span={11}>
                 <img 
-                    src={Poster === 'N/A' ? 'https://placehold.it/198x264&text=Image+Not+Found' : Poster} 
+                    src={Poster === 'N/A' ? 'https://bookshop.org/assets/no_image-22fd02851ce2e0858682f793b15fc04552e7ac5af5ef0702dcfb9fbd290e406f.svg' : Poster} 
                     alt={Title} 
                 />
             </Col>
@@ -121,8 +132,22 @@ const MovieDetail = ({Title, Poster, imdbRating, Rated, Runtime, Genre, Plot}) =
     )
 }
 
+// handleChange = (value) => {
+//     if (value <= 1) {
+//       this.setState({
+//         minValue: 0,
+//         maxValue: 10
+//       });
+//     } else {
+//       this.setState({
+//         minValue: this.state.maxValue,
+//         maxValue: value * 9
+//       });
+//     }
+//   };
+
 const Loader = () => (
-    <div style={{margin: '20px 0', textAlign: 'center'}}>
+    <div  style={{margin: '20px 0', textAlign: 'center'}}>
         <Spin />
     </div>
 )
@@ -137,7 +162,23 @@ function App() {
     const [activateModal, setActivateModal] = useState(false);
     const [detail, setShowDetail] = useState(false);
     const [detailRequest, setDetailRequest] = useState(false);
+    const [page,setPage] = useState(1);
+    const [ss,setTotal] = useState(0);
+    const [showData,setsD] = useState(null);
 
+    // handleChange = (value) => {
+    //     if (value <= 1) {
+    //       this.setState({
+    //         minValue: 0,
+    //         maxValue: 10
+    //       });
+    //     } else {
+    //       this.setState({
+    //         minValue: this.state.maxValue,
+    //         maxValue: value * 9
+    //       });
+    //     }
+    //   };
 
     useEffect(() => {
 
@@ -176,13 +217,15 @@ function App() {
                 // // console.log(sz+"Fadfss");
                 // console.log(resp['Response']+"Sds");
                 // sz = sz/10;
-
+                // setPage(1);
                 return resp.json();
             }
             )
             .then(data => {
-                console.log(data);
+                console.log(data.totalResults+"43");
                 sz=data.totalResults;
+                setTotal(sz);
+                setPage(1);
                 sz=sz/10;
                 let dt=[]
             for(let i=1;i<=sz+1;i++)
@@ -207,8 +250,9 @@ function App() {
                         x.push(dt[j][k]);
                     }
                 }
-                console.log(x);
+               // console.log(x);
                 setData(x);
+                setsD(x.slice(0,10));
                 setLoading(false);
                 
             })
@@ -218,12 +262,7 @@ function App() {
             })
         }
     
-            })
-
-           
-      
-        
-          
+            })          
         }
             
     }, [q]);
@@ -231,7 +270,7 @@ function App() {
     
     return (
         <div className="App">
-            <Layout className="layout">
+            <Layout className="layout"  >
                 <Header>
                     <div style={{ textAlign: 'center'}}>
                         <TextTitle style={{color: '#ffffff', marginTop: '14px'}} level={3}>My Movies</TextTitle>
@@ -240,20 +279,20 @@ function App() {
                 <Content style={{ padding: '0 50px' }}>
                     <div style={{ background: '#141414', padding: 24, minHeight: 280 }}>
                         <SearchBox searchHandler={setQuery} />
+                        
                         <br />
                         
                         <Row gutter={16} type="flex" justify="center">
-                            { loading &&
+                            {/* { loading &&
                                 <Loader />
-                            }
+                            } */}
 
                             { error !== null &&
                                 <div style={{margin: '20px 0'}}>
                                     <Alert message={error} type="error" />
                                 </div>
                             }
-                            {console.log(data)}
-                            { data !== null && data.length > 0 && data.map((result, index) => (
+                            { showData !== null && showData.length > 0 && showData.map((result, index) => (
 
                                
                             //    <InfiniteScroll
@@ -264,6 +303,7 @@ function App() {
                             //    >
                                    
                                <ColCardBox 
+                                    
                                     ShowDetail={setShowDetail} 
                                     DetailRequest={setDetailRequest}
                                     ActivateModal={setActivateModal}
@@ -274,8 +314,28 @@ function App() {
                                 //  </InfiniteScroll>  
                             ))}
                         </Row>
-                        
                     </div>
+                    
+                    <Pagination style={{ textAlign: 'center', padding:24}}
+                            showSizeChanger = {false}
+                            defaultCurrent={(page>2)? 1:  page}
+                            
+                            onChange={(value) => {
+                              // setPage(value);
+                            //    console.log(value + "value")
+                               //defaultCurrent = 2;
+                                var z = ss%10;
+                             
+                               if((ss/10)+1!=(value)){
+                                    setsD(data.slice((value-1)*10,((value-1)*10)+10))
+                               }
+                               else{
+                                setsD(data.slice((value-1)*10,((value-1)*10)+z))
+                               }   
+                            }}
+                             total={ss}
+                        />
+                         
                     <Modal
                         title='About'
                         centered
@@ -289,6 +349,7 @@ function App() {
                             (<Loader />) 
                         }
                     </Modal>
+
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>Mrinal Shashwat ©2021</Footer>
             </Layout>
@@ -297,3 +358,4 @@ function App() {
 }
 
 export default App;
+
